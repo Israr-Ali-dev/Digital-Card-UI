@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Business Card</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css">
+    <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
+    <style>
+        * {
+            box-sizing: border-box;
+            transition: .5s ease-in-out;
+        }
+
+        html,
+        body {
+            height: 100%;
+            overflow: hidden;
+            font-family: poppins;
+        }
+
+        html h1,
+        body h1 {
+            font-size: 25px;
+            color: #820FEC;
+            line-height: 40px;
+            margin-bottom: -15px;
+            font-weight: 700;
+        }
+
+        html h2,
+        body h2 {
+            font-size: 14px;
+        }
+
+        #wrapper {
+            opacity: 1;
+            display: table;
+            height: 100%;
+            width: 100%;
+        }
+
+        #wrapper.loaded {
+            opacity: 1;
+            transition: 2.5s ease-in-out;
+        }
+
+        #wrapper #content {
+            display: table-cell;
+            vertical-align: middle;
+        }
+
+        #card {
+            height: 530px;
+            width: 312px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            perspective: 600px;
+        }
+
+        #card #front,
+        #card #back {
+            border-radius: 10px;
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        #card #front {
+            transform: rotateY(0deg);
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        #card #front #arrow {
+            position: absolute;
+            height: 50px;
+            line-height: 50px;
+            font-size: 30px;
+            z-index: 10;
+            bottom: 0;
+            right: 50px;
+            color: rgba(255, 255, 255, 0.5);
+            animation: arrowWiggle 1s ease-in-out infinite;
+        }
+
+        #card #front #top-pic {
+            height: 50%;
+            width: 100%;
+            background-image: url('obs/OBS.jpg');
+            background-size: cover;
+        }
+
+        #card #front #avatar {
+            width: 99px;
+            height: 99px;
+            top: 50%;
+            left: 50%;
+            margin: -111px 0 0 -53px;
+            border-radius: 100%;
+            box-shadow: 0 0 0 2px #820FEC, 0 4px 5px rgba(107, 5, 0, 0.6), 0 0 0px 0px rgba(255, 255, 255, 0.25);
+            background-image: url('obs/obs-w.png');
+            background-size: contain;
+            position: absolute;
+            z-index: 1;
+
+        }
+
+        #card #front #info-box {
+            height: 50%;
+            width: 100%;
+            position: absolute;
+            display: table;
+            left: 0;
+            bottom: 0;
+            background: #fff;
+            padding: 37px 50px 50px 50px;
+        }
+
+        #card #front #social-bar {
+            height: 50px;
+            width: 100%;
+            position: absolute;
+            bottom: 0;
+            left: 20px;
+            line-height: 50px;
+            font-size: 20px;
+            text-align: left;
+        }
+
+        #card #front #social-bar a {
+            display: inline-block;
+            text-decoration: none;
+            padding: 8px;
+            line-height: 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #card #front #social-bar a:nth-child(1) {
+            color: #0f5dec
+        }
+
+        #card #front #social-bar a:nth-child(2) {
+            color: #c52cab
+        }
+
+        #card #front #social-bar a:nth-child(3) {
+            color: #0ac1ea
+        }
+
+        #card #front #social-bar a:nth-child(4) {
+            color: #c70909
+        }
+
+
+        #card #front #social-bar a:hover {
+            color: #F72B88;
+            transition: .25s ease-in-out;
+        }
+
+        #card #back {
+            transform: rotateY(180deg);
+            background-color: rgba(255, 255, 255, 0.6);
+            display: table;
+            z-index: 2;
+            font-size: 13px;
+            line-height: 20px;
+            padding: 50px;
+        }
+
+        #card #back .back-info {
+            text-align: justify;
+            text-justify: inter-word;
+        }
+
+        #card #back #social-bar {
+            height: 50px;
+            width: 100%;
+            position: absolute;
+            bottom: 0;
+            left: 20px;
+            line-height: 50px;
+            font-size: 18px;
+            text-align: left;
+        }
+
+        #card #back #social-bar a {
+            display: inline-block;
+            line-height: 18px;
+            /* color: #820FEC; */
+            text-decoration: none;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        #card #back #social-bar a:hover {
+            color: #820FEC;
+            transition: .25s ease-in-out;
+        }
+
+        #card .info {
+            display: table-cell;
+            height: 100%;
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        #card.flip #front {
+            transform: rotateY(180deg);
+        }
+
+        #card.flip #back {
+            transform: rotateY(360deg);
+        }
+
+        #background {
+            position: fixed;
+            background-color: black;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+        }
+
+        #background #background-image {
+            height: calc(100% + 60px);
+            width: calc(100% + 60px);
+            position: absolute;
+            top: -30px;
+            left: -30px;
+            -webkit-filter: blur(10px);
+            background-image: linear-gradient(to right, #820FEC, #F72B88);
+            background-size: cover;
+        }
+
+        .info-list {
+            list-style-type: none;
+            text-align: left;
+            padding-left: 0 !important;
+            font-size: 14px;
+            font-weight: 500;
+
+        }
+
+        .info-list li {
+            display: flex;
+            align-content: center;
+            align-items: flex-start;
+            margin: 7px -20px;
+        }
+
+        .info-list li a {
+            display: flex;
+            cursor: pointer;
+            text-decoration: none;
+            color: black;
+        }
+
+        .info-list li span {
+            padding: 4px 15px
+        }
+
+        .info-list li:nth-child(3) span {
+            font-size: 12px !important;
+        }
+
+        .w-link {
+            text-decoration: none;
+            color: #2d77fb;
+        }
+
+        .chatlink {
+            cursor: pointer;
+            position: absolute;
+            bottom: 5px;
+            right: 15px
+        }
+
+        @media screen and (max-width: 480px) {
+            #card {
+                height: 96%;
+                width: 90%;
+                margin: 0 auto;
+                position: relative;
+                z-index: 1;
+                perspective: 600px;
+            }
+
+            html h1,
+            body h1 {
+                font-size: 25px;
+                color: #820FEC;
+                line-height: 55px;
+                margin-bottom: -22px;
+                font-weight: 700;
+            }
+
+            #card #front #info-box {
+
+                padding: 40px 50px 68px 50px;
+            }
+        }
+
+        @media screen and (max-width: 350px) {
+            #card #front #info-box {
+
+                padding: 40px 50px 58px 50px;
+            }
+        }
+
+        @media screen and (max-width: 300px) {
+            #card #front #social-bar a {
+                display: inline-block;
+                text-decoration: none;
+                padding: 4px;
+                line-height: 20px;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+        }
+
+        @keyframes arrowWiggle {
+            0% {
+                right: 50px;
+            }
+
+            50% {
+                right: 35px;
+            }
+
+            100% {
+                right: 50px;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id="wrapper">
+        <div id="content">
+            <div id="card">
+                <div id="front">
+                    <div id="top-pic"></div>
+                    <div id="avatar"></div>
+                    <div id="info-box">
+                        <div class="info">
+                            <h1>OurBulkStore</h1>
+                            <a class="w-link" href="https://ourbulkstore.com/">
+                                <h2>www.ourbulkstore.com</h2>
+                            </a>
+                            <ul class="info-list">
+                                <li><a href="tel:+447421220011"><img src="obs/phone.png" width="24px"
+                                            height="24px" /><span>+44-7421-220011</span></a>
+                                </li>
+                                <li><a href="mailto:ourbulkstore.uk@gmail.com">
+                                        <img src="obs/mail.png" width="24px" height="24px" />
+                                        <span>ourbulkstore.uk@gmail.com</span></a>
+                                </li>
+                                <li><a href="#"><img src="obs/address.png" width="24px" height="24px" /></a>
+                                    <span>Unit 1 Tywford Industial Estate Bishops Stortford Hertfordshire CM233LJ United
+                                        Kingdom.</span></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div id="social-bar">
+                        <a href="https://www.facebook.com/OurBulkStore" target="_blank">
+                            <i class="fa fa-facebook"></i>
+                        </a>
+                        <a href="https://www.instagram.com/ourbulkstore" target="_blank">
+                            <i class="fa fa-instagram"></i>
+                        </a>
+                        <a href="https://www.twitter.com/OurBulkStore" target="_blank">
+                            <i class="fa fa-twitter"></i>
+                        </a>
+                        <a href="https://www.youtube.com/channel/UCExpGAR8gAM-dON4g_nYyng" target="_blank">
+                            <i class="fa fa-youtube"></i>
+                        </a>
+                    </div>
+                    <a href="https://wa.me/+447421220011?text=Hi%20OurBulkStore,%20I%20need%20more%20information!"
+                        target="_blank" style="position: absolute; bottom: 5px; right: 15px">
+                        <img src="obs/wp.png" width="50px" />
+                    </a>
+                </div>
+            </div>
+            <div id="background">
+                <div id="background-image"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(window).load(function () {
+            // $('#wrapper').addClass('loaded');
+        })
+
+        $('.more-info').click(function () {
+            $("#card").toggleClass('flip');
+            $('#arrow').remove();
+        });
+        $('#background').click(function () {
+            $('#card').removeClass('flip');
+        })
+    </script>
+</body>
+
+</html>
